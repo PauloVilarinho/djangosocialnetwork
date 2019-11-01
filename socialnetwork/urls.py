@@ -10,6 +10,6 @@ urlpatterns = [
     path('profile-post/<int:pk>', ProfilePostDetailView.as_view()),
     path('posts-comments', PostCommentView.as_view()),
     path('posts-comments/<int:pk>', PostCommentDetailView.as_view()),
-
+    path('servidor/posts/<int:pk>/comments', CommentView.as_view()),
 
 ]

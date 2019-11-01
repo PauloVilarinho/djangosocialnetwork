@@ -11,7 +11,7 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['postId', 'name', 'email', 'body']
+        fields = ['id','postId', 'name', 'email', 'body']
 
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:

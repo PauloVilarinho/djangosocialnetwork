@@ -91,7 +91,7 @@ class ProfilePostDetailView(APIView):
 
     def get(self, request,pk, format=None):
         profile = self.get_object(pk)
-        profile_post_s = ProfilPostSerializer(profile)
+        profile_post_s = ProfilePostSerializer(profile)
         return Response(profile_post_s.data)
 
 
@@ -172,3 +172,30 @@ class CommentDetailView(APIView):
         comment = self.get_comment(post_pk,comment_pk)
         comment.delete()
         return Response(status=status.HTTP_200_OK)
+
+class ProfileActivityView(APIView):
+
+    def get_object(self, pk):
+        try:
+            return Profile.objects.get(pk=pk)
+        except Profile.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        response = dict()
+        profile = self.get_object(pk)
+        response['name'] = profile.name
+        response['id'] = profile.id
+
+        count_p = 0
+        count_c = 0
+
+        for post in profile.posts.all():
+            count_p+=1
+            for comment in post.comments.all():
+                count_c+=1
+
+        response['total_posts'] = count_p
+        response['total_comments'] = count_c
+
+        return Response(response)

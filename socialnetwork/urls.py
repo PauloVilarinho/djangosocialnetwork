@@ -10,8 +10,9 @@ urlpatterns = [
     path('profile-post/<int:pk>', ProfilePostDetailView.as_view()),
     path('posts-comments', PostCommentView.as_view()),
     path('posts-comments/<int:pk>', PostCommentDetailView.as_view()),
-    path('servidor/posts/<int:pk>/comments', CommentView.as_view()),
-    path('servidor/posts/<int:post_pk>/comments/<int:comment_pk>', CommentDetailView.as_view()),
+    path('posts/<int:pk>/comments', CommentView.as_view()),
+    path('posts/<int:post_pk>/comments/<int:comment_pk>', CommentDetailView.as_view()),
     path('profile-activity/<int:pk>', ProfileActivityView.as_view()),
+    path('endpoints', EndpointsView.as_view()),
 
 ]

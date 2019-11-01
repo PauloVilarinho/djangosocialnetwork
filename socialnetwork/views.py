@@ -4,6 +4,7 @@ from .models import *
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+from .endpoints import *
 
 
 # Create your views here.
@@ -199,3 +200,15 @@ class ProfileActivityView(APIView):
         response['total_comments'] = count_c
 
         return Response(response)
+
+def change_path(end):
+    end['path'] = base_url +  end['path']
+    return end
+
+class EndpointsView(APIView):
+
+    def get(self,request,format=None):
+        end_ps = end_points
+        end_ps = map(change_path, end_ps)
+
+        return Response(end_ps)

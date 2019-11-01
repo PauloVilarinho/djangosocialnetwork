@@ -139,35 +139,36 @@ class CommentView(APIView):
         return Response(comment_s.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class CommentDetailView(APIView):
-#
-#     def get_comment(self, pk):
-#         try:
-#             return Comment.objects.get(pk=pk)
-#         except Comment.DoesNotExist:
-#             raise Http404
-#
-#     def get_post(self, pk):
-#         try:
-#             return Post.objects.get(pk=pk)
-#         except Post.DoesNotExist:
-#             raise Http404
-#
-#     def get(self, request, post_pk,comment_pk, format=None):
-#         profile = self.get_object(pk)
-#         profile_s = ProfileSerializer(profile)
-#         return Response(profile_s.data)
-#
-#     def put(self, request, pk, format=None):
-#         profile = self.get_object(pk)
-#         profile_s = ProfileSerializer(profile, data=request.data)
-#         if profile_s.is_valid():
-#             profile_s.save()
-#             return Response(profile_s.data)
-#         return Response(profile_s.errors, status=status.HTTP_400_BAD_REQUEST)
-#
-#     def delete(self, request, pk, format=None):
-#         profile_s = ProfileSerializer(data=request.data)
-#         profile = self.get_object(pk)
-#         profile.delete()
-#         return Response(status=status.HTTP_200_OK)
+class CommentDetailView(APIView):
+
+    def get_comment(self, post_pk,comment_pk):
+        try:
+            post = Post.objects.get(pk=post_pk)
+            try:
+                comment =  post.comments.get(pk=comment_pk)
+                return comment
+            except Comment.DoesNotExist:
+                raise Http404
+        except Post.DoesNotExist:
+            raise Http404
+
+    def get(self, request, post_pk,comment_pk, format=None):
+        comment = self.get_comment(post_pk,comment_pk)
+        comment_s = CommentSerializer(comment)
+        return Response(comment_s.data)
+
+    def put(self, request, post_pk,comment_pk, format=None):
+        comment = self.get_comment(post_pk,comment_pk)
+        comment_data = request.data
+        comment_data['postId'] = post_pk
+        comment_s = CommentSerializer(comment, data=comment_data)
+        if comment_s.is_valid():
+            comment_s.save()
+            return Response(comment_s.data)
+        return Response(comment_s.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, post_pk,comment_pk, format=None):
+        comment_s = CommentSerializer(data=request.data)
+        comment = self.get_comment(post_pk,comment_pk)
+        comment.delete()
+        return Response(status=status.HTTP_200_OK)

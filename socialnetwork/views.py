@@ -91,5 +91,26 @@ class ProfilePostDetailView(APIView):
 
     def get(self, request,pk, format=None):
         profile = self.get_object(pk)
-        profile_post_s = ProfilePostSerializer(profile)
+        profile_post_s = ProfilPostSerializer(profile)
         return Response(profile_post_s.data)
+
+
+class PostCommentView(APIView):
+
+    def get(self, request, format=None):
+        posts = Post.objects.all()
+        post_s = PostCommentSerializer(posts, many=True)
+        return Response(post_s.data)
+
+class PostCommentDetailView(APIView):
+
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            raise Http404
+
+    def get(self, request,pk, format=None):
+        post = self.get_object(pk)
+        post_s = PostCommentSerializer(post)
+        return Response(post_s.data)

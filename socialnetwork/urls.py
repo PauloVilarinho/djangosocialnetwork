@@ -8,6 +8,8 @@ urlpatterns = [
     path('profiles/<int:pk>', ProfileDetailView.as_view()),
     path('profile-post', ProfilePostView.as_view()),
     path('profile-post/<int:pk>', ProfilePostDetailView.as_view()),
+    path('posts-comments', PostCommentView.as_view()),
+    path('posts-comments/<int:pk>', PostCommentDetailView.as_view()),
 
 
 ]

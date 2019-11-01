@@ -50,3 +50,10 @@ class ProfilePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['name', 'email','posts']
+
+class PostCommentSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True,read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ['userId', 'title', 'body','comments']

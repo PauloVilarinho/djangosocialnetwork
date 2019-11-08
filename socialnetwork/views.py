@@ -1,10 +1,10 @@
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
+from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
-from .endpoints import *
 
 
 # Create your views here.
@@ -200,14 +200,20 @@ class ProfileActivityView(APIView):
 
         return Response(response)
 
-def change_path(end):
-    end['path'] = base_url +  end['path']
-    return end
+
 
 class EndpointsView(APIView):
 
     def get(self,request,format=None):
-        end_ps = end_points
-        end_ps = map(change_path, end_ps)
 
-        return Response(end_ps)
+        data = {
+
+            'profile-list': reverse('profile-list', request=request),
+            'profile-post': reverse('profile-post', request=request),
+            'post-comments': reverse('post-comments', request=request),
+            'profiles-activity': reverse('profiles-activity', request=request),
+            'root': reverse('root', request=request),
+            'load-files': reverse('load-files', request=request),
+        }
+
+        return Response(data, status=status.HTTP_200_OK)

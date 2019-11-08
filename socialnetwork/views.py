@@ -176,28 +176,27 @@ class CommentDetailView(APIView):
 
 class ProfileActivityView(APIView):
 
-    def get_object(self, pk):
-        try:
-            return Profile.objects.get(pk=pk)
-        except Profile.DoesNotExist:
-            raise Http404
+    def get(self, request, format=None):
+        response = []
+        profiles = Profile.objects.all()
 
-    def get(self, request, pk, format=None):
-        response = dict()
-        profile = self.get_object(pk)
-        response['name'] = profile.name
-        response['id'] = profile.id
+        for profile in profiles:
+            base = dict()
+            base['name'] = profile.name
+            base['id'] = profile.id
 
-        count_p = 0
-        count_c = 0
+            count_p = 0
+            count_c = 0
 
-        for post in profile.posts.all():
-            count_p+=1
-            for comment in post.comments.all():
-                count_c+=1
+            for post in profile.posts.all():
+                count_p+=1
+                for comment in post.comments.all():
+                    count_c+=1
 
-        response['total_posts'] = count_p
-        response['total_comments'] = count_c
+            base['total_posts'] = count_p
+            base['total_comments'] = count_c
+
+            response.append(base)
 
         return Response(response)
 

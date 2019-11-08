@@ -46,7 +46,7 @@ end_points = [{
 "methods": "get,put,delete",
 },
 {
-"path" :'profile-activity/<int:pk>',
+"path" :'profiles-activity',
 "description": "show activity from an especific profile",
 "methods": "get",
 },

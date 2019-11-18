@@ -115,7 +115,7 @@ REST_FRAMEWORK = {
     ,
 
     'DEFAULT_THROTTLE_RATES':
-        {'api-token': '30/hour'}
+        {'api-token': '1/hour'}
 
 }
 

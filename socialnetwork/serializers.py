@@ -1,14 +1,25 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from socialnetwork.models import *
 from .models import *
 
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['pk', 'username', 'email']
+
+
 
 class PostSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
     class Meta:
         model = Post
-        fields = ['userId', 'title', 'body']
+        fields = ['id','userId', 'title', 'body']
 
 class CommentSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
     class Meta:
         model = Comment
         fields = ['id','postId', 'name', 'email', 'body']
@@ -20,16 +31,19 @@ class AddressSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     address = AddressSerializer()
-
+    id = serializers.ReadOnlyField()
     class Meta:
         model = Profile
-        fields = ['name', 'email','address']
+        fields = ['id','name', 'email','address']
 
     def create(self, validated_data):
+        name = validated_data['name'].split(" ")[0]
+        email = validated_data['email']
+        password = 'senha'
+        new_user = User.objects.create_user(username=name, email=email, password=password)
         address_data = validated_data.pop('address')
         address = Address.objects.create(**address_data)
-        profile = Profile.objects.create(address=address ,**validated_data)
-        return profile
+        return Profile.objects.create(user=new_user, address=address, **validated_data)
 
     def update(self,instance,validated_data):
         address_data = validated_data.pop('address')
@@ -45,15 +59,23 @@ class ProfileSerializer(serializers.ModelSerializer):
         return instance
 
 class ProfilePostSerializer(serializers.ModelSerializer):
-    posts = PostSerializer(many=True,read_only=True)
-
+    posts = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='post-comments-detail'
+    )
+    id = serializers.ReadOnlyField()
     class Meta:
         model = Profile
-        fields = ['name', 'email','posts']
+        fields = ['id','name', 'email','posts']
 
 class PostCommentSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True,read_only=True)
-
+    comments = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='comment-detail',
+    )
+    id = serializers.ReadOnlyField()
     class Meta:
         model = Post
-        fields = ['userId', 'title', 'body','comments']
+        fields = ['id','userId', 'title', 'body','comments']
